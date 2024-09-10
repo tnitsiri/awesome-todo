@@ -1,3 +1,16 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+    "extends": [
+        "next/core-web-vitals",
+        "prettier",
+        "plugin:prettier/recommended"
+    ],
+    "rules": {
+        "react-hooks/exhaustive-deps": "off",
+        "no-empty": "off",
+        "no-unused-vars": [
+            "error", {
+                "args": "none"
+            }
+        ]
+    }
 }
