@@ -1,3 +1,5 @@
+import StoreProvider from '@/store/provider';
+import Root from './(common)/root';
 import './globals.css';
 import '@/asset/style/app.scss';
 import type { Metadata } from 'next';
@@ -66,7 +68,11 @@ const Layout = async ({ children }: LayoutProps) => {
                 fontFamily,
                 fontStyle: poppins.style.fontStyle,
             }}>
-            <body>{children}</body>
+            <body>
+                <StoreProvider>
+                    <Root>{children}</Root>
+                </StoreProvider>
+            </body>
         </html>
     );
 };
