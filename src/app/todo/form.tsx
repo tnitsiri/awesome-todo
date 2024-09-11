@@ -98,7 +98,7 @@ const Form = ({ mode }: Props) => {
             const due_date: string = dueDate!.toISOString();
 
             if (mode == FormModeEnum.Create) {
-                await axios.post('/todo/api/create', {
+                await axios.post('/todo/api', {
                     title,
                     description,
                     due_date,
@@ -153,7 +153,7 @@ const Form = ({ mode }: Props) => {
                 size="xs"
                 open={isOpen}
                 handler={_open}
-                className="bg-transparent shadow-none mb-24">
+                className="bg-transparent shadow-none mb-32">
                 <form onSubmit={handleSubmit(_submit)}>
                     <Card className="mx-auto w-full max-w-[24rem]">
                         <CardBody className="flex flex-col gap-4">
@@ -229,6 +229,9 @@ const Form = ({ mode }: Props) => {
                                     setDueDate(dateTime);
                                 }}
                             />
+                            <Typography className="-mb-2" variant="h6">
+                                Color *
+                            </Typography>
                         </CardBody>
                         <CardFooter className="flex flex-row items-center justify-end space-x-2 pt-0">
                             <Button

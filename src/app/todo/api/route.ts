@@ -1,9 +1,50 @@
-import axios from 'axios';
+import { TodoModel } from '@/model/todo.model';
+import { axios } from '@/service/neversitup.service';
 import { isISO8601 } from 'class-validator';
 
 /**
- * ANCHOR Post
- * @date 9/12/2024 - 12:42:43 AM
+ * ANCHOR List
+ * @date 9/12/2024 - 2:12:31 AM
+ *
+ * @export
+ * @async
+ * @param {Request} req
+ * @returns {unknown}
+ */
+export async function GET(req: Request) {
+    // todo
+    let todos: TodoModel[] = [];
+
+    try {
+        // auth
+        if (!req.headers.get('Authorization')) {
+            return Response.json([], {
+                status: 401,
+            });
+        }
+
+        // todo list
+        const { data } = await axios.get('todo', {
+            headers: {
+                Authorization: req.headers.get('Authorization'),
+            },
+        });
+
+        console.log(data);
+    } catch {
+        return Response.json([], {
+            status: 500,
+        });
+    }
+
+    return Response.json({
+        todos,
+    });
+}
+
+/**
+ * ANCHOR Create
+ * @date 9/12/2024 - 2:12:42 AM
  *
  * @export
  * @async
@@ -33,11 +74,12 @@ export async function POST(req: Request) {
 
         // create todo
         const { data } = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/todo`,
+            'todo',
             {
                 title,
                 description,
                 due_date,
+                is_done: false,
             },
             {
                 headers: {

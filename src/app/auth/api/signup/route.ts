@@ -1,8 +1,8 @@
 import axios, { AxiosError } from 'axios';
 
 /**
- * ANCHOR Post
- * @date 9/11/2024 - 10:10:01 PM
+ * ANCHOR Sign up
+ * @date 9/12/2024 - 2:16:47 AM
  *
  * @export
  * @async
