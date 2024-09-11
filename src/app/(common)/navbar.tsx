@@ -1,6 +1,8 @@
 'use client';
 
-import React, { createElement } from 'react';
+import Link from 'next/link';
+import classNames from 'classnames';
+import React, { createElement, useState } from 'react';
 import {
     Navbar as MtNavbar,
     Typography,
@@ -21,18 +23,26 @@ import {
     Bars2Icon,
     ArrowLeftStartOnRectangleIcon,
 } from '@heroicons/react/24/solid';
-import Signin from '@/app/auth/signin';
 import { useAppDispatch, useAppSelector } from '@/store/hook';
 import { setAuth } from '@/store/slice/auth.slice';
 import {
     AUTH_ACCESS_TOKEN_NAME_CONSTANT,
     AUTH_USERNAME_NAME_CONSTANT,
 } from '@/constant/auth.constant';
+import Auth from '../auth/auth';
 
-function ProfileMenu() {
+/**
+ * ANCHOR Profile Menu
+ * @date 9/11/2024 - 2:13:24 AM
+ *
+ * @returns {*}
+ */
+const ProfileMenu = () => {
     const dispatch = useAppDispatch();
 
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+    const { username } = useAppSelector((state) => state.auth);
 
     /**
      * ANCHOR Sign out
@@ -59,7 +69,17 @@ function ProfileMenu() {
                 <Button
                     variant="text"
                     color="blue-gray"
-                    className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto">
+                    className={classNames({
+                        'flex items-center gap-1 rounded-full py-0.5 pr-2 lg:ml-auto':
+                            true,
+                        'pl-0.5': !username,
+                        'pl-3': !!username,
+                    })}>
+                    {username && (
+                        <span className="font-semibold text-xs text-black mr-2">
+                            @{username}
+                        </span>
+                    )}
                     <Avatar
                         variant="circular"
                         size="sm"
@@ -80,7 +100,7 @@ function ProfileMenu() {
                     onClick={_signOut}
                     className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10">
                     {createElement(ArrowLeftStartOnRectangleIcon, {
-                        className: 'w-6 h-6 text-red-500',
+                        className: 'w-5 h-5 text-red-500',
                         strokeWidth: 2,
                     })}
                     <Typography
@@ -94,7 +114,7 @@ function ProfileMenu() {
             </MenuList>
         </Menu>
     );
-}
+};
 
 // nav list menu
 const navListMenuItems = [
@@ -237,15 +257,15 @@ export function ComplexNavbar() {
     }, []);
 
     return (
-        <div className="relative px-5">
-            <MtNavbar className="mx-auto max-w-screen-xl p-2 rounded-full pl-6 mt-10">
+        <div className="relative">
+            <MtNavbar className="mx-auto max-w-screen-xl p-2 rounded-full pl-6">
                 <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
-                    <Typography
-                        as="a"
+                    <Link
                         href="/"
                         className="mr-4 ml-2 cursor-pointer py-1.5 font-medium uppercase">
                         {process.env.NEXT_PUBLIC_BRAND}
-                    </Typography>
+                    </Link>
+
                     <div className="hidden lg:block">
                         <NavList />
                     </div>
@@ -257,7 +277,7 @@ export function ComplexNavbar() {
                         className="ml-auto mr-2 lg:hidden">
                         <Bars2Icon className="h-6 w-6" />
                     </IconButton>
-                    {!isAuthorized && <Signin />}
+                    {!isAuthorized && <Auth />}
                     {isAuthorized && <ProfileMenu />}
                 </div>
                 {/* <MobileNav open={isNavOpen} className="overflow-scroll">

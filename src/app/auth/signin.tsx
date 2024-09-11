@@ -2,7 +2,7 @@
 
 import CogoToast from '@successtar/cogo-toast';
 import axios, { AxiosError } from 'axios';
-import { useState } from 'react';
+import { createElement, useEffect, useState } from 'react';
 import {
     Button,
     Dialog,
@@ -11,6 +11,7 @@ import {
     CardFooter,
     Typography,
     Input,
+    MenuItem,
 } from '@material-tailwind/react';
 import { useForm } from 'react-hook-form';
 import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
@@ -20,6 +21,18 @@ import {
     AUTH_ACCESS_TOKEN_NAME_CONSTANT,
     AUTH_USERNAME_NAME_CONSTANT,
 } from '@/constant/auth.constant';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
+
+/**
+ * ANCHOR Props
+ * @date 9/11/2024 - 2:41:38 AM
+ *
+ * @typedef {Props}
+ */
+type Props = {
+    openToken: string | null;
+    signUp: () => void;
+};
 
 /**
  * ANCHOR Input
@@ -34,11 +47,12 @@ type Input = {
 
 /**
  * ANCHOR Signin
- * @date 9/10/2024 - 11:34:24 PM
+ * @date 9/11/2024 - 3:02:03 AM
  *
+ * @param {Props} { openToken, signUp }
  * @returns {*}
  */
-const Signin = () => {
+const Signin = ({ openToken, signUp }: Props) => {
     const dispatch = useAppDispatch();
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -48,12 +62,7 @@ const Signin = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Input>({
-        defaultValues: {
-            username: 'mojoe1',
-            password: '12345678',
-        },
-    });
+    } = useForm<Input>();
 
     /**
      * ANCHOR Submit
@@ -70,7 +79,7 @@ const Signin = () => {
             const username: string = payload.username.trim();
             const password: string = payload.password;
 
-            const { data } = await axios.post(`/auth/api/login`, {
+            const { data } = await axios.post(`/auth/api/signin`, {
                 username,
                 password,
             });
@@ -88,16 +97,6 @@ const Signin = () => {
                     accessToken: data.accessToken,
                 }),
             );
-
-            console.log(data);
-
-            // const playlistId: string = data.id;
-
-            // await fetch(playlistId);
-
-            // CogoToast.success('Your playlist has been created successfully.');
-
-            // setIsOpen(false);
         } catch (e) {
             if (
                 e instanceof AxiosError &&
@@ -126,9 +125,40 @@ const Signin = () => {
         });
     };
 
+    /**
+     * ANCHOR Sign up
+     * @date 9/11/2024 - 2:48:11 AM
+     */
+    const _signUp = () => {
+        _open();
+        signUp();
+    };
+
+    useEffect(() => {
+        if (openToken) {
+            _open();
+        }
+    }, [openToken]);
+
     return (
         <>
-            <Button onClick={_open}>Sign In</Button>
+            <Typography
+                as="a"
+                href="#"
+                variant="small"
+                color="gray"
+                className="font-medium text-blue-gray-500"
+                onClick={(e) => {
+                    e.preventDefault();
+                    _open();
+                }}>
+                <MenuItem className="flex items-center gap-2 rounded-full">
+                    {createElement(UserCircleIcon, {
+                        className: 'w-[22px] h-[22px]',
+                    })}{' '}
+                    <span className="text-gray-900"> Sign In</span>
+                </MenuItem>
+            </Typography>
             <Dialog
                 size="xs"
                 open={isOpen}
@@ -187,11 +217,12 @@ const Signin = () => {
                                 className="mt-4 flex justify-center">
                                 Don&apos;t have an account?
                                 <Typography
-                                    as="a"
-                                    href="#signup"
+                                    as="button"
+                                    type="button"
                                     variant="small"
                                     color="blue-gray"
-                                    className="ml-1 font-bold">
+                                    className="ml-1 font-bold"
+                                    onClick={_signUp}>
                                     Sign up
                                 </Typography>
                             </Typography>

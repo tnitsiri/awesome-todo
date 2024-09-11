@@ -2,15 +2,14 @@ import axios, { AxiosError } from 'axios';
 
 /**
  * ANCHOR Post
- * @date 9/11/2024 - 1:24:19 AM
+ * @date 9/11/2024 - 3:07:14 AM
  *
  * @export
  * @async
  * @param {Request} req
- * @param {Response} res
  * @returns {unknown}
  */
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
     // response
     let user: string | null = null;
     let accessToken: string | null = null;
