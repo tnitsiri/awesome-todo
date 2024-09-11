@@ -14,6 +14,7 @@ import {
     Input,
     MenuItem,
     Textarea,
+    IconButton,
 } from '@material-tailwind/react';
 import { useForm } from 'react-hook-form';
 import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
@@ -23,6 +24,8 @@ import { v1 as uuidv1 } from 'uuid';
 import { axios } from '@/service/api.service';
 import { useAppDispatch } from '@/store/hook';
 import { setTodo } from '@/store/slice/todo.slice';
+import { TodoModel } from '@/model/todo.model';
+import { FiEdit } from 'react-icons/fi';
 
 /**
  * ANCHOR Props
@@ -32,6 +35,7 @@ import { setTodo } from '@/store/slice/todo.slice';
  */
 type Props = {
     mode: FormModeEnum;
+    todo?: TodoModel;
 };
 
 /**
@@ -48,12 +52,12 @@ type Input = {
 
 /**
  * ANCHOR Form
- * @date 9/11/2024 - 11:15:57 PM
+ * @date 9/12/2024 - 5:51:48 AM
  *
- * @param {Props} { mode }
+ * @param {Props} { mode, todo }
  * @returns {*}
  */
-const Form = ({ mode }: Props) => {
+const Form = ({ mode, todo }: Props) => {
     const dispatch = useAppDispatch();
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -107,9 +111,17 @@ const Form = ({ mode }: Props) => {
                     description,
                     due_date,
                 });
-            }
 
-            CogoToast.success('Task created successfully.');
+                CogoToast.success('Task created successfully.');
+            } else if (mode == FormModeEnum.Update) {
+                await axios.patch(`/todo/api/${todo?.id}`, {
+                    title,
+                    description,
+                    due_date,
+                });
+
+                CogoToast.success('Task information has been updated.');
+            }
 
             _open();
 
@@ -133,6 +145,19 @@ const Form = ({ mode }: Props) => {
         reset();
 
         setIsOpen((isOpen) => {
+            if (mode == FormModeEnum.Update && todo) {
+                if (!isOpen) {
+                    setValue('title', todo.title);
+                    setValue('description', todo.description);
+
+                    const dueDate: Moment = moment(todo.due_date);
+
+                    setValue('dueDate', dueDate.toISOString());
+
+                    setDueDate(dueDate);
+                }
+            }
+
             return !isOpen;
         });
 
@@ -143,23 +168,37 @@ const Form = ({ mode }: Props) => {
 
     return (
         <>
-            <Typography
-                as="a"
-                href="#"
-                variant="small"
-                color="gray"
-                className="font-medium text-blue-gray-500"
-                onClick={(e) => {
-                    e.preventDefault();
-                    _open();
-                }}>
-                <MenuItem className="flex items-center gap-2 lg:rounded-full">
-                    {createElement(PlusCircleIcon, {
-                        className: 'w-[22px] h-[22px]',
-                    })}{' '}
-                    <span className="text-gray-900"> New Task</span>
-                </MenuItem>
-            </Typography>
+            {mode == FormModeEnum.Create && (
+                <Typography
+                    as="a"
+                    href="#"
+                    variant="small"
+                    color="gray"
+                    className="font-medium text-blue-gray-500"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        _open();
+                    }}>
+                    <MenuItem className="flex items-center gap-2 lg:rounded-full">
+                        {createElement(PlusCircleIcon, {
+                            className: 'w-[22px] h-[22px]',
+                        })}{' '}
+                        <span className="text-gray-900"> New Task</span>
+                    </MenuItem>
+                </Typography>
+            )}
+            {mode == FormModeEnum.Update && (
+                <IconButton
+                    variant="text"
+                    color="blue-gray"
+                    className="rounded-full"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        _open();
+                    }}>
+                    <FiEdit size={18} />
+                </IconButton>
+            )}
             <Dialog
                 size="xs"
                 open={isOpen}
@@ -169,13 +208,17 @@ const Form = ({ mode }: Props) => {
                     <Card className="mx-auto w-full max-w-[24rem]">
                         <CardBody className="flex flex-col gap-4">
                             <Typography variant="h4" color="blue-gray">
-                                New Task
+                                {mode == FormModeEnum.Create && 'New Task'}
+                                {mode == FormModeEnum.Update && 'Update Task'}
                             </Typography>
                             <Typography
                                 className="mb-3 font-normal"
                                 variant="paragraph"
                                 color="gray">
-                                Thing you need to be done.
+                                {mode == FormModeEnum.Create &&
+                                    'Thing you need to be done.'}
+                                {mode == FormModeEnum.Update &&
+                                    'Edit task information.'}
                             </Typography>
                             <Typography className="-mb-2" variant="h6">
                                 Title *

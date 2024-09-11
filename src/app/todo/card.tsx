@@ -1,4 +1,5 @@
 import CogoToast from '@successtar/cogo-toast';
+import UpdateTodo from '../todo/form';
 import { TodoModel } from '@/model/todo.model';
 import {
     ListItem,
@@ -15,6 +16,7 @@ import { useState } from 'react';
 import { FiTrash2 } from 'react-icons/fi';
 import { axios } from '@/service/api.service';
 import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
+import { FormModeEnum } from '@/enum/form.enum';
 
 /**
  * ANCHOR Props
@@ -101,6 +103,7 @@ const Card = ({ todo, fetch }: Props) => {
                 </Typography>
             </div>
             <ListItemSuffix>
+                <UpdateTodo mode={FormModeEnum.Update} todo={todo} />
                 <IconButton
                     variant="text"
                     color="blue-gray"
