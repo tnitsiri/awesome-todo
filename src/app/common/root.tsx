@@ -1,13 +1,12 @@
 'use client';
 
+import CogoToast from '@successtar/cogo-toast';
 import { ThemeProvider } from '@material-tailwind/react';
 import { ReactNode, useEffect } from 'react';
 import { useAppDispatch } from '@/store/hook';
-import {
-    AUTH_ACCESS_TOKEN_NAME_CONSTANT,
-    AUTH_USERNAME_NAME_CONSTANT,
-} from '@/constant/auth.constant';
 import { setAuth } from '@/store/slice/auth.slice';
+import { axios } from '@/service/api.service';
+import { AxiosError } from 'axios';
 
 /**
  * ANCHOR Props
@@ -30,34 +29,38 @@ const Root = ({ children }: Props) => {
     const dispatch = useAppDispatch();
 
     /**
-     * ANCHOR Init
-     * @date 9/11/2024 - 1:42:06 AM
+     * ANCHOR Fetch me
+     * @date 9/12/2024 - 3:45:24 AM
      *
      * @async
      * @returns {*}
      */
-    const _init = async () => {
-        const username: string | null = sessionStorage.getItem(
-            AUTH_USERNAME_NAME_CONSTANT,
-        );
+    const _fetchMe = async () => {
+        try {
+            const { data } = await axios.get('/auth/api/me');
 
-        const accessToken: string | null = sessionStorage.getItem(
-            AUTH_ACCESS_TOKEN_NAME_CONSTANT,
-        );
-
-        if (username && accessToken) {
             dispatch(
                 setAuth({
                     isAuthorized: true,
-                    username,
-                    accessToken,
+                    username: data.username,
                 }),
             );
+        } catch (e) {
+            if (
+                !(
+                    e instanceof AxiosError &&
+                    e.response &&
+                    e.response.status &&
+                    e.response.status == 401
+                )
+            ) {
+                CogoToast.error('Unable to fetch user information.');
+            }
         }
     };
 
     useEffect(() => {
-        _init();
+        _fetchMe();
     }, []);
 
     return (

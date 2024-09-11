@@ -17,10 +17,6 @@ import { useForm } from 'react-hook-form';
 import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
 import { useAppDispatch } from '@/store/hook';
 import { setAuth } from '@/store/slice/auth.slice';
-import {
-    AUTH_ACCESS_TOKEN_NAME_CONSTANT,
-    AUTH_USERNAME_NAME_CONSTANT,
-} from '@/constant/auth.constant';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 /**
@@ -84,17 +80,10 @@ const Signin = ({ openToken, signUp }: Props) => {
                 password,
             });
 
-            sessionStorage.setItem(AUTH_USERNAME_NAME_CONSTANT, data.username);
-            sessionStorage.setItem(
-                AUTH_ACCESS_TOKEN_NAME_CONSTANT,
-                data.accessToken,
-            );
-
             dispatch(
                 setAuth({
                     isAuthorized: true,
                     username: data.username,
-                    accessToken: data.accessToken,
                 }),
             );
         } catch (e) {
@@ -156,7 +145,7 @@ const Signin = ({ openToken, signUp }: Props) => {
                     {createElement(UserCircleIcon, {
                         className: 'w-[22px] h-[22px]',
                     })}{' '}
-                    <span className="text-gray-900"> Sign In</span>
+                    <span className="text-gray-900"> Sign In / Sign Up</span>
                 </MenuItem>
             </Typography>
             <Dialog

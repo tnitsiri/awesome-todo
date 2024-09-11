@@ -15,10 +15,6 @@ import {
 } from '@material-tailwind/react';
 import { useForm } from 'react-hook-form';
 import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
-import {
-    AUTH_ACCESS_TOKEN_NAME_CONSTANT,
-    AUTH_USERNAME_NAME_CONSTANT,
-} from '@/constant/auth.constant';
 import { setAuth } from '@/store/slice/auth.slice';
 import { useAppDispatch } from '@/store/hook';
 
@@ -42,6 +38,7 @@ type Props = {
 type Input = {
     username: string;
     password: string;
+    cPassword: string;
 };
 
 /**
@@ -72,6 +69,12 @@ const Signup = ({ openToken, signIn }: Props) => {
      * @returns {*}
      */
     const _submit = async (payload: Input) => {
+        if (payload.password != payload.cPassword) {
+            CogoToast.error('Passwords must match in both fields.');
+
+            return;
+        }
+
         setDoing(true);
 
         try {
@@ -85,17 +88,10 @@ const Signup = ({ openToken, signIn }: Props) => {
 
             CogoToast.success('User account created successfully.');
 
-            sessionStorage.setItem(AUTH_USERNAME_NAME_CONSTANT, data.username);
-            sessionStorage.setItem(
-                AUTH_ACCESS_TOKEN_NAME_CONSTANT,
-                data.accessToken,
-            );
-
             dispatch(
                 setAuth({
                     isAuthorized: true,
                     username: data.username,
-                    accessToken: data.accessToken,
                 }),
             );
         } catch (e) {
@@ -167,25 +163,50 @@ const Signup = ({ openToken, signIn }: Props) => {
                         <Input
                             {...register('username', {
                                 required: true,
-                                validate: (v) => !!v.trim(),
+                                validate: (v) => !!v.trim() && v.length >= 5,
                             })}
                             label="Username"
                             size="lg"
                             autoFocus={true}
                             error={!!errors.username}
                         />
+                        <Typography
+                            variant="small"
+                            color="gray"
+                            className="flex items-center gap-1 font-normal text-xs -mt-2">
+                            Use at least 5 characters.
+                        </Typography>
                         <Typography className="-mb-2" variant="h6">
                             Your Password
                         </Typography>
                         <Input
                             {...register('password', {
                                 required: true,
-                                validate: (v) => !!v,
+                                validate: (v) => !!v && v.length >= 8,
                             })}
                             type="password"
                             label="Password"
                             size="lg"
                             error={!!errors.password}
+                        />
+                        <Typography
+                            variant="small"
+                            color="gray"
+                            className="flex items-center gap-1 font-normal text-xs -mt-2">
+                            Use at least 8 characters.
+                        </Typography>
+                        <Typography className="-mb-2" variant="h6">
+                            Confirm Password
+                        </Typography>
+                        <Input
+                            {...register('cPassword', {
+                                required: true,
+                                validate: (v) => !!v && v.length >= 8,
+                            })}
+                            type="password"
+                            label="Repeat Password"
+                            size="lg"
+                            error={!!errors.cPassword}
                         />
                     </CardBody>
                     <CardFooter className="pt-0">

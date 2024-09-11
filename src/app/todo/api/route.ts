@@ -1,3 +1,4 @@
+import { AUTH_ACCESS_TOKEN_HEADER_NAME_CONSTANT } from '@/constant/auth.constant';
 import { TodoModel } from '@/model/todo.model';
 import { axios } from '@/service/neversitup.service';
 import { isISO8601 } from 'class-validator';
@@ -16,17 +17,10 @@ export async function GET(req: Request) {
     let todos: TodoModel[] = [];
 
     try {
-        // auth
-        if (!req.headers.get('Authorization')) {
-            return Response.json([], {
-                status: 401,
-            });
-        }
-
         // todo list
         const { data } = await axios.get('todo', {
             headers: {
-                Authorization: req.headers.get('Authorization'),
+                Authorization: `Bearer ${req.headers.get(AUTH_ACCESS_TOKEN_HEADER_NAME_CONSTANT)}`,
             },
         });
 

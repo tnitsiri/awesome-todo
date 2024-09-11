@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import CogoToast from '@successtar/cogo-toast';
 import classNames from 'classnames';
 import Auth from '../auth/auth';
 import CreateTodo from '../todo/form';
@@ -27,11 +28,9 @@ import {
 } from '@heroicons/react/24/solid';
 import { useAppDispatch, useAppSelector } from '@/store/hook';
 import { setAuth } from '@/store/slice/auth.slice';
-import {
-    AUTH_ACCESS_TOKEN_NAME_CONSTANT,
-    AUTH_USERNAME_NAME_CONSTANT,
-} from '@/constant/auth.constant';
 import { FormModeEnum } from '@/enum/form.enum';
+import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
+import { axios } from '@/service/api.service';
 
 /**
  * ANCHOR Profile Menu
@@ -48,21 +47,26 @@ const ProfileMenu = () => {
 
     /**
      * ANCHOR Sign out
-     * @date 9/11/2024 - 2:03:43 AM
+     * @date 9/12/2024 - 4:16:27 AM
+     *
+     * @async
+     * @returns {*}
      */
-    const _signOut = () => {
+    const _signOut = async () => {
         setIsMenuOpen(false);
 
-        sessionStorage.removeItem(AUTH_USERNAME_NAME_CONSTANT);
-        sessionStorage.removeItem(AUTH_ACCESS_TOKEN_NAME_CONSTANT);
+        try {
+            await axios.post('/auth/api/signout');
 
-        dispatch(
-            setAuth({
-                isAuthorized: false,
-                username: null,
-                accessToken: null,
-            }),
-        );
+            dispatch(
+                setAuth({
+                    isAuthorized: false,
+                    username: null,
+                }),
+            );
+        } catch {
+            CogoToast.error(COMMON_ERROR_MESSAGE_CONSTANT);
+        }
     };
 
     return (
