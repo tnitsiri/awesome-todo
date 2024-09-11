@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import classNames from 'classnames';
+import Auth from '../auth/auth';
+import CreateTodo from '../todo/form';
 import React, { createElement, useState } from 'react';
 import {
     Navbar as MtNavbar,
@@ -29,7 +31,7 @@ import {
     AUTH_ACCESS_TOKEN_NAME_CONSTANT,
     AUTH_USERNAME_NAME_CONSTANT,
 } from '@/constant/auth.constant';
-import Auth from '../auth/auth';
+import { FormModeEnum } from '@/enum/form.enum';
 
 /**
  * ANCHOR Profile Menu
@@ -219,6 +221,8 @@ const navListItems = [
 ];
 
 function NavList() {
+    const { isAuthorized } = useAppSelector((state) => state.auth);
+
     return (
         <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
             <NavListMenu />
@@ -238,6 +242,7 @@ function NavList() {
                     </MenuItem>
                 </Typography>
             ))}
+            {isAuthorized && <CreateTodo mode={FormModeEnum.Create} />}
         </ul>
     );
 }
@@ -257,7 +262,7 @@ export function ComplexNavbar() {
     }, []);
 
     return (
-        <div className="relative">
+        <div className="sticky top-10 z-10">
             <MtNavbar className="mx-auto max-w-screen-xl p-2 rounded-full pl-6">
                 <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
                     <Link

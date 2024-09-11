@@ -79,7 +79,7 @@ const Signin = ({ openToken, signUp }: Props) => {
             const username: string = payload.username.trim();
             const password: string = payload.password;
 
-            const { data } = await axios.post(`/auth/api/signin`, {
+            const { data } = await axios.post('/auth/api/signin', {
                 username,
                 password,
             });

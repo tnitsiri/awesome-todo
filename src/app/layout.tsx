@@ -1,7 +1,8 @@
 import StoreProvider from '@/store/provider';
-import Root from './(common)/root';
+import Root from './common/root';
 import './globals.css';
 import '@/asset/style/app.scss';
+import 'react-datetime/css/react-datetime.css';
 import type { Metadata } from 'next';
 import { Poppins, Prompt } from 'next/font/google';
 import { LayoutProps } from '@/type/common.type';

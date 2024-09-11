@@ -61,12 +61,7 @@ const Signup = ({ openToken, signIn }: Props) => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Input>({
-        defaultValues: {
-            username: 'mojoe1',
-            password: '12345678',
-        },
-    });
+    } = useForm<Input>();
 
     /**
      * ANCHOR Submit
@@ -83,7 +78,7 @@ const Signup = ({ openToken, signIn }: Props) => {
             const username: string = payload.username.trim();
             const password: string = payload.password;
 
-            const { data } = await axios.post(`/auth/api/signup`, {
+            const { data } = await axios.post('/auth/api/signup', {
                 username,
                 password,
             });

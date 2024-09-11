@@ -33,7 +33,7 @@ export async function POST(req: Request) {
             },
         );
 
-        if (data.isSuccess === true && data.data) {
+        if (typeof data == 'object' && data.isSuccess === true && data.data) {
             // login
             const { data } = await axios.post(
                 `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
