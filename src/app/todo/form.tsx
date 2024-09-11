@@ -21,6 +21,8 @@ import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { FormModeEnum } from '@/enum/form.enum';
 import { v1 as uuidv1 } from 'uuid';
 import { axios } from '@/service/api.service';
+import { useAppDispatch } from '@/store/hook';
+import { setTodo } from '@/store/slice/todo.slice';
 
 /**
  * ANCHOR Props
@@ -52,6 +54,8 @@ type Input = {
  * @returns {*}
  */
 const Form = ({ mode }: Props) => {
+    const dispatch = useAppDispatch();
+
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [doing, setDoing] = useState<boolean>(false);
 
@@ -103,11 +107,18 @@ const Form = ({ mode }: Props) => {
                     description,
                     due_date,
                 });
-
-                CogoToast.success('Task created successfully.');
-                _open();
             }
-        } catch (e) {
+
+            CogoToast.success('Task created successfully.');
+
+            _open();
+
+            dispatch(
+                setTodo({
+                    fetchListToken: uuidv1(),
+                }),
+            );
+        } catch {
             CogoToast.error(COMMON_ERROR_MESSAGE_CONSTANT);
         } finally {
             setDoing(false);
@@ -229,9 +240,6 @@ const Form = ({ mode }: Props) => {
                                     setDueDate(dateTime);
                                 }}
                             />
-                            <Typography className="-mb-2" variant="h6">
-                                Color *
-                            </Typography>
                         </CardBody>
                         <CardFooter className="flex flex-row items-center justify-end space-x-2 pt-0">
                             <Button

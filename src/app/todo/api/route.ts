@@ -5,7 +5,7 @@ import { isISO8601 } from 'class-validator';
 
 /**
  * ANCHOR List
- * @date 9/12/2024 - 2:12:31 AM
+ * @date 9/12/2024 - 4:39:00 AM
  *
  * @export
  * @async
@@ -24,7 +24,9 @@ export async function GET(req: Request) {
             },
         });
 
-        console.log(data);
+        if (typeof data == 'object' && data.isSuccess === true && data.data) {
+            todos = data.data;
+        }
     } catch {
         return Response.json([], {
             status: 500,
@@ -38,7 +40,7 @@ export async function GET(req: Request) {
 
 /**
  * ANCHOR Create
- * @date 9/12/2024 - 2:12:42 AM
+ * @date 9/12/2024 - 4:39:06 AM
  *
  * @export
  * @async
@@ -50,13 +52,6 @@ export async function POST(req: Request) {
     let isSuccess: boolean = false;
 
     try {
-        // auth
-        if (!req.headers.get('Authorization')) {
-            return Response.json([], {
-                status: 401,
-            });
-        }
-
         // payload
         const { title, description, due_date } = await req.json();
 
@@ -77,7 +72,7 @@ export async function POST(req: Request) {
             },
             {
                 headers: {
-                    Authorization: req.headers.get('Authorization'),
+                    Authorization: `Bearer ${req.headers.get(AUTH_ACCESS_TOKEN_HEADER_NAME_CONSTANT)}`,
                 },
             },
         );

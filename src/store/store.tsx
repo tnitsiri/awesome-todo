@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { authSlice } from './slice/auth.slice';
+import { todoSlice } from './slice/todo.slice';
 
 /**
  * ANCHOR Make Store
@@ -11,6 +12,7 @@ export const makeStore = () => {
     return configureStore({
         reducer: {
             [authSlice.name]: authSlice.reducer,
+            [todoSlice.name]: todoSlice.reducer,
         },
     });
 };

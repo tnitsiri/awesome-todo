@@ -1,19 +1,12 @@
 'use client';
 
 import CogoToast from '@successtar/cogo-toast';
-import {
-    List as MtList,
-    ListItem,
-    ListItemPrefix,
-    Avatar,
-    Card,
-    Typography,
-    ListItemSuffix,
-    IconButton,
-} from '@material-tailwind/react';
-import { useEffect } from 'react';
-import { FiTrash2 } from 'react-icons/fi';
+import TodoCard from './card';
+import { List as MtList, Card } from '@material-tailwind/react';
+import { useEffect, useState } from 'react';
 import { axios } from '@/service/api.service';
+import { TodoModel } from '@/model/todo.model';
+import { useAppSelector } from '@/store/hook';
 
 /**
  * ANCHOR List
@@ -22,6 +15,11 @@ import { axios } from '@/service/api.service';
  * @returns {*}
  */
 const List = () => {
+    const [todos, setTodos] = useState<TodoModel[]>([]);
+
+    const { isAuthorized } = useAppSelector((state) => state.auth);
+    const { fetchListToken } = useAppSelector((state) => state.todo);
+
     /**
      * ANCHOR Fetch
      * @date 9/12/2024 - 1:16:18 AM
@@ -33,7 +31,7 @@ const List = () => {
         try {
             const { data } = await axios.get('/todo/api');
 
-            console.log(data);
+            setTodos(data.todos);
         } catch (_) {
             CogoToast.error('Unable to fetch task list.');
         }
@@ -43,79 +41,30 @@ const List = () => {
         _fetch();
     }, []);
 
+    useEffect(() => {
+        if (fetchListToken) {
+            _fetch();
+        }
+    }, [fetchListToken]);
+
     return (
-        <Card className="w-96">
-            <MtList>
-                <ListItem>
-                    <ListItemPrefix>
-                        <Avatar
-                            variant="circular"
-                            alt="candice"
-                            src="https://docs.material-tailwind.com/img/face-1.jpg"
-                        />
-                    </ListItemPrefix>
-                    <div>
-                        <Typography variant="h6" color="blue-gray">
-                            Tania Andrew
-                        </Typography>
-                        <Typography
-                            variant="small"
-                            color="gray"
-                            className="font-normal">
-                            Software Engineer @ Material Tailwind
-                        </Typography>
-                    </div>
-                    <ListItemSuffix>
-                        <IconButton
-                            variant="text"
-                            color="blue-gray"
-                            className="rounded-full">
-                            <FiTrash2 size={18} />
-                        </IconButton>
-                    </ListItemSuffix>
-                </ListItem>
-                <ListItem>
-                    <ListItemPrefix>
-                        <Avatar
-                            variant="circular"
-                            alt="alexander"
-                            src="https://docs.material-tailwind.com/img/face-2.jpg"
-                        />
-                    </ListItemPrefix>
-                    <div>
-                        <Typography variant="h6" color="blue-gray">
-                            Alexander
-                        </Typography>
-                        <Typography
-                            variant="small"
-                            color="gray"
-                            className="font-normal">
-                            Backend Developer @ Material Tailwind
-                        </Typography>
-                    </div>
-                </ListItem>
-                <ListItem>
-                    <ListItemPrefix>
-                        <Avatar
-                            variant="circular"
-                            alt="emma"
-                            src="https://docs.material-tailwind.com/img/face-3.jpg"
-                        />
-                    </ListItemPrefix>
-                    <div>
-                        <Typography variant="h6" color="blue-gray">
-                            Emma Willever
-                        </Typography>
-                        <Typography
-                            variant="small"
-                            color="gray"
-                            className="font-normal">
-                            UI/UX Designer @ Material Tailwind
-                        </Typography>
-                    </div>
-                </ListItem>
-            </MtList>
-        </Card>
+        <>
+            {isAuthorized && (
+                <Card className="w-96">
+                    <MtList>
+                        {todos.map((todo) => {
+                            return (
+                                <TodoCard
+                                    key={todo.id}
+                                    todo={todo}
+                                    fetch={_fetch}
+                                />
+                            );
+                        })}
+                    </MtList>
+                </Card>
+            )}
+        </>
     );
 };
 
