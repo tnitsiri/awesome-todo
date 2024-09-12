@@ -41,7 +41,6 @@ const List = ({ isSidebar }: Props) => {
     const [filter, setFilter] = useState<TodoFilterEnum>(TodoFilterEnum.All);
     const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
 
-    const { isAuthorized } = useAppSelector((state) => state.auth);
     const { fetchListToken } = useAppSelector((state) => state.todo);
 
     /**
@@ -144,30 +143,26 @@ const List = ({ isSidebar }: Props) => {
                     </MenuList>
                 </Menu>
             </div>
-            {isAuthorized && (
-                <>
-                    {todos.length > 0 && (
-                        <Card>
-                            <MtList>
-                                {todos.map((todo) => {
-                                    return (
-                                        <TodoCard
-                                            key={todo.id}
-                                            todo={todo}
-                                            isSidebar={isSidebar}
-                                            fetch={_fetch}
-                                        />
-                                    );
-                                })}
-                            </MtList>
-                        </Card>
-                    )}
-                    {todos.length < 1 && (
-                        <div className="pt-1 text-sm text-gray-600">
-                            <em>You don&apos;t have a task at the moment</em>
-                        </div>
-                    )}
-                </>
+            {todos.length > 0 && (
+                <Card>
+                    <MtList>
+                        {todos.map((todo) => {
+                            return (
+                                <TodoCard
+                                    key={todo.id}
+                                    todo={todo}
+                                    isSidebar={isSidebar}
+                                    fetch={_fetch}
+                                />
+                            );
+                        })}
+                    </MtList>
+                </Card>
+            )}
+            {todos.length < 1 && (
+                <div className="pt-1 text-sm text-gray-600">
+                    <em>You don&apos;t have a task at the moment</em>
+                </div>
             )}
         </>
     );
