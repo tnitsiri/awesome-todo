@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import {
     AUTH_ACCESS_TOKEN_COOKIE_NAME_CONSTANT,
     AUTH_ACCESS_TOKEN_HEADER_NAME_CONSTANT,
+    AUTH_APP_ACCESS_TOKEN_HEADER_NAME_CONSTANT,
+    AUTH_APP_AUTHORIZED_HEADER_NAME_CONSTANT,
     AUTH_AUTHORIZED_COOKIE_NAME_CONSTANT,
 } from './constant/auth.constant';
 import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
@@ -29,17 +31,17 @@ export function middleware(request: Request) {
     // cookie store
     const cookieStore = cookies();
 
-    // access token
-    const accessToken: RequestCookie | undefined = cookieStore.get(
-        AUTH_ACCESS_TOKEN_COOKIE_NAME_CONSTANT,
-    );
-
     // authorized
     const authorized: RequestCookie | undefined = cookieStore.get(
         AUTH_AUTHORIZED_COOKIE_NAME_CONSTANT,
     );
 
-    if (accessToken && accessToken.value && authorized && authorized.value) {
+    // access token
+    const accessToken: RequestCookie | undefined = cookieStore.get(
+        AUTH_ACCESS_TOKEN_COOKIE_NAME_CONSTANT,
+    );
+
+    if (authorized && accessToken) {
         request.headers.set(
             AUTH_ACCESS_TOKEN_HEADER_NAME_CONSTANT,
             accessToken.value,
@@ -48,6 +50,27 @@ export function middleware(request: Request) {
         return NextResponse.next({
             request,
         });
+    } else {
+        // authorized
+        const authorized: string | null = request.headers.get(
+            AUTH_APP_AUTHORIZED_HEADER_NAME_CONSTANT,
+        );
+
+        // access token
+        const accessToken: string | null = request.headers.get(
+            AUTH_APP_ACCESS_TOKEN_HEADER_NAME_CONSTANT,
+        );
+
+        if (authorized && accessToken) {
+            request.headers.set(
+                AUTH_ACCESS_TOKEN_HEADER_NAME_CONSTANT,
+                accessToken,
+            );
+
+            return NextResponse.next({
+                request,
+            });
+        }
     }
 
     return Response.json(

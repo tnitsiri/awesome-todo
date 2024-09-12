@@ -1,5 +1,6 @@
 import StoreProvider from '@/store/provider';
 import Root from './common/root';
+import Navbar from './common/navbar';
 import './globals.css';
 import '@/asset/style/app.scss';
 import 'react-datetime/css/react-datetime.css';
@@ -71,7 +72,10 @@ const Layout = async ({ children }: LayoutProps) => {
             }}>
             <body>
                 <StoreProvider>
-                    <Root>{children}</Root>
+                    <Root>
+                        <Navbar />
+                        {children}
+                    </Root>
                 </StoreProvider>
             </body>
         </html>

@@ -24,7 +24,7 @@ export async function GET() {
             AUTH_AUTHORIZED_COOKIE_NAME_CONSTANT,
         );
 
-        if (authorized && authorized.value) {
+        if (authorized) {
             // auth service
             const authService: AuthService = new AuthService();
 

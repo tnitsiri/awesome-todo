@@ -10,6 +10,7 @@ declare global {
 
             NEXT_PUBLIC_BRAND: string;
 
+            NEXT_PUBLIC_APP_URL: string;
             NEXT_PUBLIC_API_URL: string;
         }
     }

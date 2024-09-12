@@ -1,4 +1,5 @@
 import { AUTH_ACCESS_TOKEN_HEADER_NAME_CONSTANT } from '@/constant/auth.constant';
+import { TodoModel } from '@/model/todo.model';
 import { axios } from '@/service/neversitup.service';
 import { isISO8601 } from 'class-validator';
 
@@ -11,6 +12,44 @@ import { isISO8601 } from 'class-validator';
 type ParamsType = {
     id: string;
 };
+
+/**
+ * ANCHOR Info
+ * @date 9/12/2024 - 7:03:27 AM
+ *
+ * @export
+ * @async
+ * @param {Request} req
+ * @param {{ params: ParamsType }} context
+ * @returns {unknown}
+ */
+export async function GET(req: Request, context: { params: ParamsType }) {
+    // response
+    let todo: TodoModel | null = null;
+
+    try {
+        // todo info
+        const { data } = await axios.get(`todo/${context.params.id}`, {
+            headers: {
+                Authorization: `Bearer ${req.headers.get(AUTH_ACCESS_TOKEN_HEADER_NAME_CONSTANT)}`,
+            },
+        });
+
+        if (typeof data == 'object' && data.isSuccess === true && data.data) {
+            todo = data.data;
+        }
+    } catch {}
+
+    if (!todo) {
+        return Response.json([], {
+            status: 404,
+        });
+    }
+
+    return Response.json({
+        todo,
+    });
+}
 
 /**
  * ANCHOR Update

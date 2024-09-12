@@ -36,6 +36,7 @@ import { FiEdit } from 'react-icons/fi';
 type Props = {
     mode: FormModeEnum;
     todo?: TodoModel;
+    onOpen?: (isOpen: boolean) => void;
 };
 
 /**
@@ -52,12 +53,12 @@ type Input = {
 
 /**
  * ANCHOR Form
- * @date 9/12/2024 - 5:51:48 AM
+ * @date 9/12/2024 - 6:26:41 AM
  *
- * @param {Props} { mode, todo }
+ * @param {Props} { mode, todo, onOpen }
  * @returns {*}
  */
-const Form = ({ mode, todo }: Props) => {
+const Form = ({ mode, todo, onOpen }: Props) => {
     const dispatch = useAppDispatch();
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -158,6 +159,10 @@ const Form = ({ mode, todo }: Props) => {
                 }
             }
 
+            if (onOpen) {
+                onOpen(!isOpen);
+            }
+
             return !isOpen;
         });
 
@@ -192,6 +197,7 @@ const Form = ({ mode, todo }: Props) => {
                     variant="text"
                     color="blue-gray"
                     className="rounded-full"
+                    data-action="ignore"
                     onClick={(e) => {
                         e.preventDefault();
                         _open();
