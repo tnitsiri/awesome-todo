@@ -1,6 +1,7 @@
 'use client';
 
 import CogoToast from '@successtar/cogo-toast';
+import Tippy from '@tippyjs/react';
 import { TodoModel } from '@/model/todo.model';
 import { axios } from '@/service/api.service';
 import {
@@ -92,14 +93,16 @@ const Remove = ({
 
     return (
         <>
-            <IconButton
-                variant="text"
-                color="blue-gray"
-                className="rounded-full"
-                data-action="ignore"
-                onClick={_removeConfirmOpenHandler}>
-                <FiTrash2 size={18} />
-            </IconButton>
+            <Tippy content="Remove" className="text-center">
+                <IconButton
+                    variant="text"
+                    color="blue-gray"
+                    className="rounded-full"
+                    data-action="ignore"
+                    onClick={_removeConfirmOpenHandler}>
+                    <FiTrash2 size={18} />
+                </IconButton>
+            </Tippy>
             <Dialog
                 open={isRemoveConfirmOpen}
                 handler={_removeConfirmOpenHandler}

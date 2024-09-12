@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import CogoToast from '@successtar/cogo-toast';
 import Truncate from 'react-truncate';
+import Tippy from '@tippyjs/react';
 import classNames from 'classnames';
 import Update from './form';
 import Remove from './remove';
@@ -134,21 +135,25 @@ const Card = ({ todo, isSidebar, fetch }: Props) => {
             className="flex flex-row items-center py-2 group"
             onClick={_view}>
             {!isSidebar && (
-                <IconButton
-                    color={isDone ? 'green' : undefined}
-                    variant={isDone ? undefined : 'outlined'}
-                    size="sm"
-                    className="rounded-full mr-4"
-                    data-action="ignore"
-                    onClick={_done}>
-                    <GiCheckMark
-                        size={14}
-                        className={classNames({
-                            'text-white': true,
-                            ['opacity-0']: !isDone,
-                        })}
-                    />
-                </IconButton>
+                <Tippy
+                    content={isDone ? 'Undone' : 'Done'}
+                    className="text-center">
+                    <IconButton
+                        color={isDone ? 'green' : undefined}
+                        variant={isDone ? undefined : 'outlined'}
+                        size="sm"
+                        className="rounded-full mr-4"
+                        data-action="ignore"
+                        onClick={_done}>
+                        <GiCheckMark
+                            size={14}
+                            className={classNames({
+                                'text-white': true,
+                                ['opacity-0']: !isDone,
+                            })}
+                        />
+                    </IconButton>
+                </Tippy>
             )}
             <div className="flex-1 flex flex-col space-y-2">
                 <div>

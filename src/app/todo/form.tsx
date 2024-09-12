@@ -2,6 +2,7 @@
 
 import CogoToast from '@successtar/cogo-toast';
 import Datetime from 'react-datetime';
+import Tippy from '@tippyjs/react';
 import moment, { Moment } from 'moment-timezone';
 import { createElement, useState } from 'react';
 import {
@@ -206,17 +207,19 @@ const Form = ({ mode, todo, onOpen, onUpdated }: Props) => {
                 </Typography>
             )}
             {mode == FormModeEnum.Update && (
-                <IconButton
-                    variant="text"
-                    color="blue-gray"
-                    className="rounded-full"
-                    data-action="ignore"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        _open();
-                    }}>
-                    <FiEdit size={18} />
-                </IconButton>
+                <Tippy content="Update" className="text-center">
+                    <IconButton
+                        variant="text"
+                        color="blue-gray"
+                        className="rounded-full"
+                        data-action="ignore"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            _open();
+                        }}>
+                        <FiEdit size={18} />
+                    </IconButton>
+                </Tippy>
             )}
             <Dialog
                 size="xs"

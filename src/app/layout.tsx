@@ -5,6 +5,7 @@ import ProgressBar from './common/progress-bar';
 import './globals.css';
 import '@/asset/style/app.scss';
 import 'react-datetime/css/react-datetime.css';
+import 'tippy.js/dist/tippy.css';
 import type { Metadata } from 'next';
 import { Poppins, Prompt } from 'next/font/google';
 import { LayoutProps } from '@/type/common.type';
