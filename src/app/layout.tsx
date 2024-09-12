@@ -1,6 +1,7 @@
 import StoreProvider from '@/store/provider';
 import Root from './common/root';
 import Navbar from './common/navbar';
+import ProgressBar from './common/progress-bar';
 import './globals.css';
 import '@/asset/style/app.scss';
 import 'react-datetime/css/react-datetime.css';
@@ -77,6 +78,7 @@ const Layout = async ({ children }: LayoutProps) => {
                         {children}
                     </Root>
                 </StoreProvider>
+                <ProgressBar />
             </body>
         </html>
     );

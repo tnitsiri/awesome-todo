@@ -10,9 +10,7 @@ const Page = () => {
     return (
         <main className="w-full max-w-full flex min-h-screen flex-col pt-10 pb-28 px-8">
             <div className="mx-auto max-w-screen-xl w-full pt-10">
-                <div className="flex flex-col items-start">
-                    <TodoList />
-                </div>
+                <TodoList />
             </div>
         </main>
     );

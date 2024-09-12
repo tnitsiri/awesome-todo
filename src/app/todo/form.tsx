@@ -26,6 +26,7 @@ import { useAppDispatch } from '@/store/hook';
 import { setTodo } from '@/store/slice/todo.slice';
 import { TodoModel } from '@/model/todo.model';
 import { FiEdit } from 'react-icons/fi';
+import { usePathname, useRouter } from 'next/navigation';
 
 /**
  * ANCHOR Props
@@ -60,11 +61,14 @@ type Input = {
  */
 const Form = ({ mode, todo, onOpen }: Props) => {
     const dispatch = useAppDispatch();
+    const pathname = usePathname();
+    const router = useRouter();
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [doing, setDoing] = useState<boolean>(false);
 
     const [titleKey, setTitleKey] = useState<string>(uuidv1());
+    const [dueDateKey, setDueDateKey] = useState<string>(uuidv1());
     const [dueDate, setDueDate] = useState<Moment | null>(null);
 
     const {
@@ -107,13 +111,17 @@ const Form = ({ mode, todo, onOpen }: Props) => {
             const due_date: string = dueDate!.toISOString();
 
             if (mode == FormModeEnum.Create) {
-                await axios.post('/todo/api', {
+                const { data } = await axios.post('/todo/api', {
                     title,
                     description,
                     due_date,
                 });
 
                 CogoToast.success('Task created successfully.');
+
+                if (pathname != '/') {
+                    router.push(`/todo/${data.id}`);
+                }
             } else if (mode == FormModeEnum.Update) {
                 await axios.patch(`/todo/api/${todo?.id}`, {
                     title,
@@ -144,6 +152,7 @@ const Form = ({ mode, todo, onOpen }: Props) => {
      */
     const _open = () => {
         reset();
+        setDueDate(null);
 
         setIsOpen((isOpen) => {
             if (mode == FormModeEnum.Update && todo) {
@@ -168,6 +177,7 @@ const Form = ({ mode, todo, onOpen }: Props) => {
 
         setTimeout(() => {
             setTitleKey(uuidv1());
+            setDueDateKey(uuidv1());
         });
     };
 
@@ -259,6 +269,7 @@ const Form = ({ mode, todo, onOpen }: Props) => {
                                 Due date *
                             </Typography>
                             <Datetime
+                                key={dueDateKey}
                                 value={dueDate || undefined}
                                 dateFormat="DD/MMM/YYYY"
                                 timeFormat="HH:mm"

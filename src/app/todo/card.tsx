@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import CogoToast from '@successtar/cogo-toast';
+import classNames from 'classnames';
 import UpdateTodo from '../todo/form';
 import { TodoModel } from '@/model/todo.model';
 import {
@@ -19,6 +20,8 @@ import { axios } from '@/service/api.service';
 import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
 import { FormModeEnum } from '@/enum/form.enum';
 import { useRouter } from 'next/navigation';
+import { startProgress } from 'next-nprogress-bar';
+import { GiCheckMark } from 'react-icons/gi';
 
 /**
  * ANCHOR Props
@@ -41,11 +44,44 @@ type Props = {
 const Card = ({ todo, fetch }: Props) => {
     const router = useRouter();
 
+    const [doing, setDoing] = useState<boolean>(false);
     const [isUpdateFormOpen, setIsUpdateFormOpen] = useState<boolean>(false);
 
     const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] =
         useState<boolean>(false);
     const [removing, setRemoving] = useState<boolean>(false);
+
+    const [isDone, setIsDone] = useState<boolean>(todo.is_done);
+
+    /**
+     * ANCHOR Done
+     * @date 9/12/2024 - 8:06:22 AM
+     *
+     * @async
+     * @returns {*}
+     */
+    const _done = async () => {
+        if (doing) {
+            return;
+        }
+
+        setDoing(true);
+        setIsDone((isDone) => !isDone);
+
+        try {
+            await axios.put(`/todo/api/${todo.id}`, {
+                isDone: !isDone,
+            });
+
+            await fetch();
+        } catch {
+            setIsDone((isDone) => !isDone);
+
+            CogoToast.error(COMMON_ERROR_MESSAGE_CONSTANT);
+        } finally {
+            setDoing(false);
+        }
+    };
 
     /**
      * ANCHOR Update form open
@@ -113,21 +149,34 @@ const Card = ({ todo, fetch }: Props) => {
             $(e.target).closest('[data-action="ignore"]').length < 1 &&
             $(e.target).closest('[data-floating-ui-portal]').length < 1
         ) {
+            startProgress();
+
             router.push(`/todo/${todo.id}`);
         }
     };
 
     return (
-        <a href={`/todo/${todo.id}`} onClick={_view}>
+        <a
+            href={`/todo/${todo.id}`}
+            data-prevent-nprogress={true}
+            onClick={_view}>
             <ListItem ripple={!isUpdateFormOpen && !isRemoveConfirmOpen}>
-                {/* <ListItemPrefix>
-                <Avatar
-                    variant="circular"
-                    alt="candice"
-                    src="https://docs.material-tailwind.com/img/face-1.jpg"
-                />
-            </ListItemPrefix> */}
-                <div>
+                <IconButton
+                    color={isDone ? 'green' : undefined}
+                    variant={isDone ? undefined : 'outlined'}
+                    size="sm"
+                    className="rounded-full mr-3"
+                    data-action="ignore"
+                    onClick={_done}>
+                    <GiCheckMark
+                        size={14}
+                        className={classNames({
+                            'text-white': true,
+                            ['opacity-0']: !isDone,
+                        })}
+                    />
+                </IconButton>
+                <div className="flex-1">
                     <Typography variant="h6" color="blue-gray">
                         {todo.title}
                     </Typography>

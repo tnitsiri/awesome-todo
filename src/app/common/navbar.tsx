@@ -266,7 +266,7 @@ export function ComplexNavbar() {
     }, []);
 
     return (
-        <div className="sticky top-10 z-10">
+        <div className="sticky top-10 z-50">
             <MtNavbar className="mx-auto max-w-screen-xl p-2 rounded-full pl-6">
                 <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
                     <Link
@@ -274,7 +274,6 @@ export function ComplexNavbar() {
                         className="mr-4 ml-2 cursor-pointer py-1.5 font-medium uppercase">
                         {process.env.NEXT_PUBLIC_BRAND}
                     </Link>
-
                     <div className="hidden lg:block">
                         <NavList />
                     </div>

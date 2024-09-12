@@ -49,7 +49,7 @@ export async function GET(req: Request) {
  */
 export async function POST(req: Request) {
     // response
-    let isSuccess: boolean = false;
+    let id: string | null = null;
 
     try {
         // payload
@@ -78,15 +78,17 @@ export async function POST(req: Request) {
         );
 
         if (typeof data == 'object' && data.isSuccess === true && data.data) {
-            isSuccess = true;
+            id = data.data.id;
         }
     } catch {}
 
-    if (!isSuccess) {
+    if (!id) {
         return Response.json([], {
             status: 500,
         });
     }
 
-    return Response.json([]);
+    return Response.json({
+        id,
+    });
 }
