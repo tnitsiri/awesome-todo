@@ -1,21 +1,18 @@
 import $ from 'jquery';
 import CogoToast from '@successtar/cogo-toast';
+import Truncate from 'react-truncate';
 import classNames from 'classnames';
-import UpdateTodo from '../todo/form';
+import Update from './form';
+import Remove from './remove';
+import moment, { Moment } from 'moment-timezone';
 import { TodoModel } from '@/model/todo.model';
 import {
     ListItem,
     Typography,
     ListItemSuffix,
     IconButton,
-    Dialog,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
-    Button,
 } from '@material-tailwind/react';
 import { useState, MouseEvent } from 'react';
-import { FiTrash2 } from 'react-icons/fi';
 import { axios } from '@/service/api.service';
 import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
 import { FormModeEnum } from '@/enum/form.enum';
@@ -31,17 +28,18 @@ import { GiCheckMark } from 'react-icons/gi';
  */
 type Props = {
     todo: TodoModel;
+    isSidebar?: boolean;
     fetch: () => Promise<void>;
 };
 
 /**
  * ANCHOR Card
- * @date 9/12/2024 - 5:12:56 AM
+ * @date 9/12/2024 - 3:31:18 PM
  *
- * @param {Props} { todo, fetch }
+ * @param {Props} { todo, isSidebar, fetch }
  * @returns {*}
  */
-const Card = ({ todo, fetch }: Props) => {
+const Card = ({ todo, isSidebar, fetch }: Props) => {
     const router = useRouter();
 
     const [doing, setDoing] = useState<boolean>(false);
@@ -49,7 +47,6 @@ const Card = ({ todo, fetch }: Props) => {
 
     const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] =
         useState<boolean>(false);
-    const [removing, setRemoving] = useState<boolean>(false);
 
     const [isDone, setIsDone] = useState<boolean>(todo.is_done);
 
@@ -96,76 +93,52 @@ const Card = ({ todo, fetch }: Props) => {
     };
 
     /**
-     * ANCHOR Remove
-     * @date 9/12/2024 - 4:59:36 AM
-     *
-     * @async
-     * @returns {*}
-     */
-    const _remove = async () => {
-        if (removing) {
-            return;
-        }
-
-        setRemoving(true);
-
-        try {
-            await axios.delete(`/todo/api/${todo.id}`);
-
-            await fetch();
-
-            CogoToast.success('Task has been successfully removed.');
-
-            setIsRemoveConfirmOpen((e) => !e);
-        } catch {
-            CogoToast.error(COMMON_ERROR_MESSAGE_CONSTANT);
-        } finally {
-            setRemoving(false);
-        }
-    };
-
-    /**
-     * ANCHOR Remove confirm open handler
-     * @date 9/12/2024 - 4:58:29 AM
-     */
-    const _removeConfirmOpenHandler = () => {
-        if (removing) {
-            return;
-        }
-
-        setIsRemoveConfirmOpen((e) => !e);
-    };
-
-    /**
      * ANCHOR View
-     * @date 9/12/2024 - 6:22:56 AM
+     * @date 9/12/2024 - 9:19:29 AM
      *
-     * @param {MouseEvent<HTMLAnchorElement>} e
+     * @param {MouseEvent<HTMLDivElement>} e
      */
-    const _view = (e: MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-
+    const _view = (e: MouseEvent<HTMLDivElement>) => {
         if (
             $(e.target).closest('[data-action="ignore"]').length < 1 &&
             $(e.target).closest('[data-floating-ui-portal]').length < 1
         ) {
             startProgress();
 
-            router.push(`/todo/${todo.id}`);
+            if (isSidebar) {
+                const now: Moment = moment();
+
+                router.push(`/todo/${todo.id}?t=${now.unix()}`);
+            } else {
+                router.push(`/todo/${todo.id}`);
+            }
         }
     };
 
+    // due date
+    const dueDate: Moment = moment(todo.due_date);
+
+    let isDanger: boolean = false;
+
+    if (!isDone) {
+        const now: Moment = moment();
+
+        if (now.isAfter(dueDate)) {
+            isDanger = true;
+        }
+    }
+
     return (
-        <a
-            href={`/todo/${todo.id}`}
-            data-prevent-nprogress={true}
+        <ListItem
+            ripple={!isUpdateFormOpen && !isRemoveConfirmOpen}
+            className="flex flex-row items-center py-2 group"
             onClick={_view}>
-            <ListItem ripple={!isUpdateFormOpen && !isRemoveConfirmOpen}>
+            {!isSidebar && (
                 <IconButton
                     color={isDone ? 'green' : undefined}
                     variant={isDone ? undefined : 'outlined'}
                     size="sm"
-                    className="rounded-full mr-3"
+                    className="rounded-full mr-4"
                     data-action="ignore"
                     onClick={_done}>
                     <GiCheckMark
@@ -176,67 +149,47 @@ const Card = ({ todo, fetch }: Props) => {
                         })}
                     />
                 </IconButton>
-                <div className="flex-1">
+            )}
+            <div className="flex-1 flex flex-col space-y-2">
+                <div>
                     <Typography variant="h6" color="blue-gray">
-                        {todo.title}
+                        <Truncate lines={2}>{todo.title}</Truncate>
                     </Typography>
                     <Typography
                         variant="small"
                         color="gray"
-                        className="font-normal ">
-                        {todo.description}
+                        className="font-normal">
+                        <Truncate lines={3}>{todo.description}</Truncate>
                     </Typography>
                 </div>
-                <ListItemSuffix>
-                    <UpdateTodo
+                <div
+                    className={classNames({
+                        'text-sm': true,
+                        'text-gray-500': !isDanger,
+                        'text-red-500': isDanger,
+                    })}
+                    style={{
+                        fontSize: 12.5,
+                    }}>
+                    DUE DATE: {dueDate.format('DD/MM/YY HH:mm')}
+                </div>
+            </div>
+            {!isSidebar && (
+                <ListItemSuffix className="flex flex-row items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity ease-in-out duration-300">
+                    <Update
                         mode={FormModeEnum.Update}
                         todo={todo}
                         onOpen={_updateFormOpen}
                     />
-                    <IconButton
-                        variant="text"
-                        color="blue-gray"
-                        className="rounded-full"
-                        data-action="ignore"
-                        onClick={_removeConfirmOpenHandler}>
-                        <FiTrash2 size={18} />
-                    </IconButton>
-                    <Dialog
-                        open={isRemoveConfirmOpen}
-                        handler={_removeConfirmOpenHandler}
-                        size="xs">
-                        <DialogHeader className="flex flex-col items-start">
-                            <Typography className="mb-1" variant="h4">
-                                Remove Task
-                            </Typography>
-                        </DialogHeader>
-                        <DialogBody>
-                            <Typography className="-mt-7 " color="gray">
-                                Are you sure you want to remove this task?
-                            </Typography>
-                        </DialogBody>
-                        <DialogFooter className="space-x-2">
-                            <Button
-                                variant="text"
-                                color="gray"
-                                tabIndex={2}
-                                disabled={removing}
-                                onClick={_removeConfirmOpenHandler}>
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="gradient"
-                                color="gray"
-                                tabIndex={1}
-                                loading={removing}
-                                onClick={_remove}>
-                                Remove Task
-                            </Button>
-                        </DialogFooter>
-                    </Dialog>
+                    <Remove
+                        todo={todo}
+                        isRemoveConfirmOpen={isRemoveConfirmOpen}
+                        setIsRemoveConfirmOpen={setIsRemoveConfirmOpen}
+                        onRemoved={fetch}
+                    />
                 </ListItemSuffix>
-            </ListItem>
-        </a>
+            )}
+        </ListItem>
     );
 };
 

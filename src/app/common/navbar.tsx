@@ -31,6 +31,7 @@ import { setAuth } from '@/store/slice/auth.slice';
 import { FormModeEnum } from '@/enum/form.enum';
 import { COMMON_ERROR_MESSAGE_CONSTANT } from '@/constant/message.constant';
 import { axios } from '@/service/api.service';
+import { usePathname, useRouter } from 'next/navigation';
 
 /**
  * ANCHOR Profile Menu
@@ -40,6 +41,8 @@ import { axios } from '@/service/api.service';
  */
 const ProfileMenu = () => {
     const dispatch = useAppDispatch();
+    const pathname = usePathname();
+    const router = useRouter();
 
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
@@ -64,6 +67,10 @@ const ProfileMenu = () => {
                     username: null,
                 }),
             );
+
+            if (pathname != '/') {
+                router.push('/');
+            }
         } catch {
             CogoToast.error(COMMON_ERROR_MESSAGE_CONSTANT);
         }

@@ -1,3 +1,4 @@
+import Actions from './actions';
 import {
     AUTH_ACCESS_TOKEN_COOKIE_NAME_CONSTANT,
     AUTH_APP_ACCESS_TOKEN_HEADER_NAME_CONSTANT,
@@ -111,11 +112,11 @@ const Page = async ({ params }: PageProps<Props>) => {
     const todo: TodoModel = await getTodo(params.id);
 
     return (
-        <main className="w-full max-w-full flex min-h-screen flex-col pt-10 pb-28 px-8">
-            <div className="mx-auto max-w-screen-xl w-full pt-10">
-                <div className="flex flex-col items-start">Todo Detail</div>
-            </div>
-        </main>
+        <div className="flex flex-col items-start w-full lg:w-4/6 mb-8 lg:mb-0">
+            <Actions todo={todo} />
+            <h5 className="font-semibold text-lg mb-3">{todo.title}</h5>
+            <div>{todo.description}</div>
+        </div>
     );
 };
 

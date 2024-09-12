@@ -68,7 +68,6 @@ const Form = ({ mode, todo, onOpen }: Props) => {
     const [doing, setDoing] = useState<boolean>(false);
 
     const [titleKey, setTitleKey] = useState<string>(uuidv1());
-    const [dueDateKey, setDueDateKey] = useState<string>(uuidv1());
     const [dueDate, setDueDate] = useState<Moment | null>(null);
 
     const {
@@ -177,7 +176,6 @@ const Form = ({ mode, todo, onOpen }: Props) => {
 
         setTimeout(() => {
             setTitleKey(uuidv1());
-            setDueDateKey(uuidv1());
         });
     };
 
@@ -269,7 +267,6 @@ const Form = ({ mode, todo, onOpen }: Props) => {
                                 Due date *
                             </Typography>
                             <Datetime
-                                key={dueDateKey}
                                 value={dueDate || undefined}
                                 dateFormat="DD/MMM/YYYY"
                                 timeFormat="HH:mm"
