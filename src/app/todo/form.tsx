@@ -38,6 +38,7 @@ type Props = {
     mode: FormModeEnum;
     todo?: TodoModel;
     onOpen?: (isOpen: boolean) => void;
+    onUpdated?: () => void;
 };
 
 /**
@@ -54,12 +55,12 @@ type Input = {
 
 /**
  * ANCHOR Form
- * @date 9/12/2024 - 6:26:41 AM
+ * @date 9/12/2024 - 4:13:23 PM
  *
- * @param {Props} { mode, todo, onOpen }
+ * @param {Props} { mode, todo, onOpen, onUpdated }
  * @returns {*}
  */
-const Form = ({ mode, todo, onOpen }: Props) => {
+const Form = ({ mode, todo, onOpen, onUpdated }: Props) => {
     const dispatch = useAppDispatch();
     const pathname = usePathname();
     const router = useRouter();
@@ -129,6 +130,10 @@ const Form = ({ mode, todo, onOpen }: Props) => {
                 });
 
                 CogoToast.success('Task information has been updated.');
+
+                if (onUpdated) {
+                    onUpdated();
+                }
             }
 
             _open();

@@ -1,11 +1,13 @@
 'use client';
 
 import classNames from 'classnames';
+import Update from '../form';
 import Remove from '../remove';
 import moment, { Moment } from 'moment-timezone';
 import { TodoModel } from '@/model/todo.model';
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { FormModeEnum } from '@/enum/form.enum';
 
 /**
  * ANCHOR Props
@@ -32,6 +34,16 @@ const Actions = ({ todo }: Props) => {
         useState<boolean>(false);
 
     /**
+     * ANCHOR Updated
+     * @date 9/12/2024 - 4:14:27 PM
+     */
+    const _updated = () => {
+        const now: Moment = moment();
+
+        router.push(`/todo/${todo.id}?t=${now.unix()}`);
+    };
+
+    /**
      * ANCHOR Removed
      * @date 9/12/2024 - 4:07:50 PM
      */
@@ -55,7 +67,7 @@ const Actions = ({ todo }: Props) => {
     }
 
     return (
-        <div className="flex flex-row items-center w-full mb-3 pb-1 border-b border-gray-300">
+        <div className="flex flex-row items-center space-x-1 w-full mb-3 pb-1 border-b border-gray-300">
             <div
                 className={classNames({
                     'flex-1 text-sm': true,
@@ -67,6 +79,11 @@ const Actions = ({ todo }: Props) => {
                 }}>
                 DUE DATE: {dueDate.format('DD/MM/YY HH:mm')}
             </div>
+            <Update
+                mode={FormModeEnum.Update}
+                todo={todo}
+                onUpdated={_updated}
+            />
             <Remove
                 todo={todo}
                 isRemoveConfirmOpen={isRemoveConfirmOpen}
