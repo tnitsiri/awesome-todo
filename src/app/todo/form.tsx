@@ -202,7 +202,10 @@ const Form = ({ mode, todo, onOpen, onUpdated }: Props) => {
                         {createElement(PlusCircleIcon, {
                             className: 'w-[22px] h-[22px]',
                         })}{' '}
-                        <span className="text-gray-900"> New Task</span>
+                        <span className="hidden sm:flex text-gray-900">
+                            {' '}
+                            New Task
+                        </span>
                     </MenuItem>
                 </Typography>
             )}
