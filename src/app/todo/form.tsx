@@ -198,7 +198,7 @@ const Form = ({ mode, todo, onOpen, onUpdated }: Props) => {
                         e.preventDefault();
                         _open();
                     }}>
-                    <MenuItem className="flex items-center gap-2 lg:rounded-full">
+                    <MenuItem className="flex items-center gap-2 rounded-full">
                         {createElement(PlusCircleIcon, {
                             className: 'w-[22px] h-[22px]',
                         })}{' '}
