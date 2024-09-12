@@ -1,4 +1,4 @@
-import Content from './home/content';
+import Content from './home/(component)/content';
 
 /**
  * ANCHOR Page

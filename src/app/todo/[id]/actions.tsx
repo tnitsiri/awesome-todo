@@ -3,8 +3,8 @@
 import CogoToast from '@successtar/cogo-toast';
 import Tippy from '@tippyjs/react';
 import classNames from 'classnames';
-import Update from '../form';
-import Remove from '../remove';
+import Update from '../(component)/form';
+import Remove from '../(component)/remove';
 import moment, { Moment } from 'moment-timezone';
 import { TodoModel } from '@/model/todo.model';
 import { useEffect, useState } from 'react';

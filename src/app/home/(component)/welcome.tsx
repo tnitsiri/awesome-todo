@@ -1,7 +1,7 @@
 'use client';
 
-import TestimonialCard1 from '../testimonial/card1';
-import TestimonialCard2 from '../testimonial/card2';
+import TestimonialCard1 from '../../testimonial/(component)/card1';
+import TestimonialCard2 from '../../testimonial/(component)/card2';
 import { TestimonialModel } from '@/model/testimonial.model';
 import { Typography } from '@material-tailwind/react';
 

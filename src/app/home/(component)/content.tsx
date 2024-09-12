@@ -1,7 +1,7 @@
 'use client';
 
-import TodoList from '../todo/(component)/list';
-import Welcome from './(component)/welcome';
+import TodoList from '../../todo/(component)/list';
+import Welcome from './welcome';
 import { useAppSelector } from '@/store/hook';
 
 /**

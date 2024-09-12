@@ -1,4 +1,4 @@
-import TodoList from '../list';
+import TodoList from '../(component)/list';
 import { LayoutProps } from '@/type/common.type';
 
 /**

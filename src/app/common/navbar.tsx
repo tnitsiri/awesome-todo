@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import Auth from '../auth/auth';
-import CreateTodo from '../todo/form';
+import classNames from 'classnames';
+import Auth from '../auth/(component)/auth';
+import CreateTodo from '../todo/(component)/form';
 import ProfileMenu from './profile-menu';
 import {
     MenuItem,
@@ -13,6 +14,7 @@ import { useAppSelector } from '@/store/hook';
 import { FormModeEnum } from '@/enum/form.enum';
 import { createElement } from 'react';
 import { TableCellsIcon } from '@heroicons/react/24/solid';
+import { usePathname } from 'next/navigation';
 
 /**
  * ANCHOR Navbar
@@ -21,6 +23,8 @@ import { TableCellsIcon } from '@heroicons/react/24/solid';
  * @returns {*}
  */
 const Navbar = () => {
+    const pathname = usePathname();
+
     const { isAuthorized } = useAppSelector((state) => state.auth);
 
     return (
@@ -41,7 +45,13 @@ const Navbar = () => {
                                     variant="small"
                                     color="gray"
                                     className="font-medium text-blue-gray-500">
-                                    <MenuItem className="flex items-center gap-2 rounded-full">
+                                    <MenuItem
+                                        className={classNames({
+                                            'flex items-center gap-2 rounded-full':
+                                                true,
+                                            'bg-blue-gray-50':
+                                                pathname == '/table-plus',
+                                        })}>
                                         {createElement(TableCellsIcon, {
                                             className: 'w-[22px] h-[22px]',
                                         })}{' '}
